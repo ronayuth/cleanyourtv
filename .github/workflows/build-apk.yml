@@ -9,6 +9,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -19,10 +20,12 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Install Android SDK packages
+      - name: Setup Android SDK
         run: |
-          yes | sdkmanager --licenses || true
-          sdkmanager "platforms;android-34" "build-tools;34.0.0"
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          test -x "$SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses || true
+          "$SDKMANAGER" --install "platforms;android-34" "build-tools;34.0.0"
 
       - name: Build APK
         working-directory: launcher
